@@ -8,13 +8,6 @@ const mongoose = require("mongoose");
 const productRoutes = require("./api/routes/products");
 const orderRoutes = require("./api/routes/orders");
 
-console.log(process.env.MONGO_ATLAS_PW);
-console.log(
-  "mongodb://colinmj:" +
-    process.env.MONGO_ATLAS_PW +
-    "@node-rest-shop-shard-00-00-qtd0o.mongodb.net:27017,node-rest-shop-shard-00-01-qtd0o.mongodb.net:27017,node-rest-shop-shard-00-02-qtd0o.mongodb.net:27017/test?ssl=true&replicaSet=node-rest-shop-shard-0&authSource=admin"
-);
-
 mongoose
   .connect(
     "mongodb://colinmj:turtle12@node-rest-shop-shard-00-00-qtd0o.mongodb.net:27017,node-rest-shop-shard-00-01-qtd0o.mongodb.net:27017,node-rest-shop-shard-00-02-qtd0o.mongodb.net:27017/test?ssl=true&replicaSet=node-rest-shop-shard-0&authSource=admin"

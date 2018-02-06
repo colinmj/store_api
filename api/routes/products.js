@@ -11,10 +11,24 @@ const Product = require("../models/products");
 
 router.get("/", (req, res, next) => {
   Product.find()
+    .select("name price _id")
     .exec()
     .then(docs => {
-      console.log(docs);
-      res.status(200).json(docs);
+      const response = {
+        count: docs.length,
+        products: docs.map(doc => {
+          return {
+            name: doc.name,
+            price: doc.price,
+            _id: doc._id,
+            request: {
+              type: "GET",
+              url: "http//localhost:9000/products/" + doc._id
+            }
+          };
+        })
+      };
+      res.status(200).json(response);
     })
     .catch(err => {
       res.status(500).json({
@@ -34,8 +48,16 @@ router.post("/", (req, res, next) => {
     .then(result => {
       console.log(result);
       res.status(201).json({
-        message: "Handling post requests to /products",
-        createdProduct: result
+        message: "You created a product!",
+        createdProduct: {
+          name: result.name,
+          price: result.price,
+          _id: result._id,
+          request: {
+            type: "POST",
+            url: "http//localhost:9000/products/" + result._id
+          }
+        }
       });
     })
     .catch(err => {
@@ -49,11 +71,17 @@ router.post("/", (req, res, next) => {
 router.get("/:productId", (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
+    .select("name price _id")
     .exec()
     .then(doc => {
-      console.log(doc);
       if (doc) {
-        res.status(200).json(doc);
+        res.status(200).json({
+          product: doc,
+          request: {
+            type: "GET",
+            url: "http://localhost:9000/products/" + doc._id
+          }
+        });
       } else {
         res.status(404).json({
           message: "No valid entry found for this id"
@@ -77,7 +105,13 @@ router.patch("/:productId", (req, res, next) => {
   Product.update({ _id: id }, { $set: updateOps })
     .exec()
     .then(result => {
-      res.status(200).json(result);
+      res.status(200).json({
+        message: "Product Updated",
+        request: {
+          type: "UPDATE",
+          url: "http://localhost:9000/products/" + id
+        }
+      });
     })
     .catch(err => {
       res.status(500).json({
